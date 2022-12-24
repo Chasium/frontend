@@ -5,6 +5,7 @@ import ModsView from '@/views/home/ModsView.vue';
 import MyModsView from '@/views/home/MyModsView.vue';
 import MyTemplatesView from '@/views/home/MyTemplatesView.vue';
 import TemplatesView from '@/views/home/TemplatesView.vue';
+import UserView from '@/views/home/UserView.vue';
 import LoginView from '@/views/LoginView.vue';
 import TemplateEditView from '@/views/TemplateEditView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
@@ -20,6 +21,7 @@ const router = createRouter({
             name: 'home',
             component: HomeView,
             children: [
+                { path: 'user', component: UserView },
                 { path: 'begin', component: BeginView },
                 { path: 'cards', component: CardsView },
                 { path: 'templates', component: TemplatesView },

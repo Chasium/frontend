@@ -7,7 +7,7 @@
         <div class="r-content">
             <el-dropdown>
                 <span class="el-dropdown-link">
-                    <img class="user-img" src="@/assets/images/user.png" />
+                    <img v-if="imgPath" :src="imgPath" class="user-img" />
                 </span>
                 <template #dropdown>
                     <el-dropdown-menu>
@@ -26,17 +26,43 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { HTTPApi } from '@/apigen';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import 'element-plus/theme-chalk/el-message.css';
 import 'element-plus/theme-chalk/el-message-box.css';
+import { createDOMCompilerError } from '@vue/compiler-dom';
+import { useUserStore } from '@/stores/user';
 
 export default defineComponent({
     data() {
-        return;
+        return {
+            imgPath: 'http://localhost:8080/src/assets/images/noImage.png',
+        };
+    },
+    async created() {
+        try {
+            let response = await HTTPApi.post('/user/get-my-info', {
+                session: useUserStore().session,
+            });
+            console.log('created got response: ', response.code);
+            if (response.code === 1) {
+                alert('user not found');
+                return;
+            }
+            else if (response.code === 2) {
+                this.imgPath = 'http://localhost:8080/src/assets/images/noImage.png';
+                console.log("no initial image");
+                return;
+            }
+            // 显示数据库中的头像
+            this.imgPath = response.img;
+        } catch (err) {
+            alert('异常');
+        }
     },
     methods: {
         clickUser() {
-            this.$router.push('/user');
+            this.$router.push('/home/user');
         },
         exitUser() {
             ElMessageBox.confirm('确认退出账户？', '提示', {
