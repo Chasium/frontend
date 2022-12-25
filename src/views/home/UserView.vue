@@ -15,11 +15,34 @@
                         <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
                     </el-upload>
                     <div class="user-info">
-                        <p class="name">憨憨小胖</p>
+                        <p class="name">{{ name }}</p>
+                        <el-form>
+                            <el-form-item v-if="clickedButton==true">
+                                <input
+                                    v-model="newName"
+                                    placeholder="请输入新的用户名"
+                                    class="input_data"
+                                />
+                            </el-form-item>
+                        </el-form>
                         <p class="id">
                             用户名：<span>{{ id }}</span>
                         </p>
-                        <p class="time">游戏总时长：<span>100小时</span></p>
+                        <p class="time">游戏总时长：<span>{{ gamingTime }}</span></p>
+                    </div>
+                    <div class="changeName">
+                        <el-button
+                            class="submitButton"
+                            v-if="clickedButton"
+                            @click="changeName"
+                            >提交</el-button
+                        >
+                        <el-button
+                            class="nameButton"
+                            v-else
+                            @click="clickedButton = true"
+                            >改名</el-button
+                        >
                     </div>
                 </div>
                 <div class="login-info">
@@ -60,7 +83,11 @@ export default defineComponent({
         return {
             id: 'Boinzz',
             imgPath: '',
+            name: '',
+            newName: '',
+            gamingTime: '100小时',
             time: '2022/11/23 18:55:00',
+            clickedButton: false,
             gameRecord: [
                 {
                     img: 'http://localhost:8080/src/assets/images/Cthulhu.png',
@@ -80,6 +107,36 @@ export default defineComponent({
         };
     },
     async created (){
+        // get id
+        try {
+            let response = await HTTPApi.post('/user/get-id', {
+                session: useUserStore().session,
+            });
+            console.log('created got response: ', response.code);
+            if (response.code === 1) {
+                alert('user not found');
+                return;
+            }
+            this.id = response.id;
+        } catch (err) {
+            alert('异常');
+        }
+        // get name
+        try {
+            let response = await HTTPApi.post('/user/get-my-name', {
+                session: useUserStore().session,
+            });
+            console.log('created got response: ', response.code);
+            if (response.code === 1) {
+                alert('user not found');
+                return;
+            }
+            this.name = response.name;
+            this.newName = this.name;
+        } catch (err) {
+            alert('异常');
+        }
+        // TODO: get last login time
         try {
             let response = await HTTPApi.post('/user/get-my-info', {
                 session: useUserStore().session,
@@ -89,7 +146,7 @@ export default defineComponent({
                 alert('user not found');
                 return;
             }
-            else if (response.code === 2) {
+            else if (response.code === 2) {  // 如果用户还没有存过头像
                 this.imgPath = 'http://localhost:8080/src/assets/images/noImage.png';
                 console.log("no initial image");
                 return;
@@ -101,6 +158,27 @@ export default defineComponent({
         }
     },
     methods: {
+        async changeName() {
+            if(this.newName === ''){
+                alert('用户名不能为空');
+                return;
+            }
+            try {
+                let response = await HTTPApi.post('/user/modify-name', {
+                    session: useUserStore().session,
+                    newName: this.newName,
+                });
+                console.log('got response: ', response.code);
+                if (response.code === 1) {
+                    alert('user not found');
+                    return;
+                }
+            } catch (err) {
+                alert('异常');
+            }
+            this.name = this.newName;
+            this.clickedButton = false;
+        },
         // 上传前，限制的上传图片大小
         beforeImageUpload(rawFile: any){
             if (rawFile.size / 1024 > 5) {
@@ -164,7 +242,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .box-user {
-    min-width: 450px;
+    min-width: 470px;
     min-height: 280px;
 }
 .avatar-uploader .avatar {
@@ -192,6 +270,16 @@ export default defineComponent({
         }
     }
 }
+.changeName {
+    .submitButton{
+        margin-top: -40px;
+        margin-left: 20px;
+    }
+    .nameButton {
+        margin-top: -60px;
+        margin-left: 20px;
+    }
+}
 .login-info {
     p {
         line-height: 28px;
@@ -207,7 +295,7 @@ export default defineComponent({
     margin-top: 20px;
 }
 .box-game-data {
-    margin-left: 160px;
+    margin-left: 80px;
     min-width: 880px;
     .scrollbar-demo-item {
         display: flex;
