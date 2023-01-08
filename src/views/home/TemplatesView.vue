@@ -42,7 +42,7 @@ class TemplateList extends ListObject<CardTemplate> {
         return item.name;
     }
     getDescription(item: CardTemplate): string {
-        return '';
+        return `id: ${item.id}`;
     }
     onItemClick(item: CardTemplate): void {}
 }

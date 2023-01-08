@@ -42,7 +42,7 @@ class CardList extends ListObject<Card> {
         return item.name;
     }
     getDescription(item: Card): string {
-        return '';
+        return `id: ${item.id}`;
     }
     onItemClick(item: Card): void {}
 }

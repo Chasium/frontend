@@ -1,5 +1,3 @@
-import type CardTemplate from '../card_template/v2/CardTemplate';
-
 export default class Card {
     readonly properties = new Map<number, any>();
     constructor(readonly templateId: number) {}
