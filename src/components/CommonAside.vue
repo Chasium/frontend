@@ -70,8 +70,8 @@ export default defineComponent({
             console.log(key, keyPath);
         },
         clickHome() {
-            if (this.$route.path != '/home') {
-                this.$router.push('/home');
+            if (this.$route.path != '/home/begin') {
+                this.$router.push('/home/begin');
             }
         },
         clickCards() {
