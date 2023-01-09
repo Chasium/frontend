@@ -12,7 +12,6 @@
 import { defineComponent } from 'vue';
 import { useWSStore } from '@/stores/ws';
 import { useUserStore } from '@/stores/user';
-import { th } from 'element-plus/es/locale';
 export default defineComponent({
     data() {
         return {
