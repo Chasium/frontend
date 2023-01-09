@@ -1,10 +1,10 @@
 <template>
     <el-form label-width="15em">
-        <el-button>创建房间</el-button>
+        <el-button @click="createRoom">创建房间</el-button>
         <el-form-item label="房间邀请码：">
-            <el-input></el-input>
+            <el-input v-model="roomId"></el-input>
         </el-form-item>
-        <el-button>加入房间</el-button>
+        <el-button @click="joinRoom">加入房间</el-button>
     </el-form>
 </template>
 
