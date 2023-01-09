@@ -12,12 +12,14 @@
                         :on-change="handleChange"
                     >
                         <img v-if="imgPath" :src="imgPath" class="avatar" />
-                        <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+                        <el-icon v-else class="avatar-uploader-icon"
+                            ><Plus
+                        /></el-icon>
                     </el-upload>
                     <div class="user-info">
                         <p class="name">{{ name }}</p>
                         <el-form>
-                            <el-form-item v-if="clickedButton==true">
+                            <el-form-item v-if="clickedButton == true">
                                 <input
                                     v-model="newName"
                                     placeholder="请输入新的用户名"
@@ -28,7 +30,9 @@
                         <p class="id">
                             用户名：<span>{{ id }}</span>
                         </p>
-                        <p class="time">游戏总时长：<span>{{ gamingTime }}</span></p>
+                        <p class="time">
+                            游戏总时长：<span>{{ gamingTime }}</span>
+                        </p>
                     </div>
                     <div class="changeName">
                         <el-button
@@ -75,8 +79,7 @@
 import { defineComponent } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { HTTPApi } from '@/apigen';
-import { Plus } from '@element-plus/icons-vue'
-
+import { Plus } from '@element-plus/icons-vue';
 
 export default defineComponent({
     data() {
@@ -106,7 +109,7 @@ export default defineComponent({
             ],
         };
     },
-    async created (){
+    async created() {
         // get id
         try {
             let response = await HTTPApi.post('/user/get-id', {
@@ -145,10 +148,11 @@ export default defineComponent({
             if (response.code === 1) {
                 alert('user not found');
                 return;
-            }
-            else if (response.code === 2) {  // 如果用户还没有存过头像
-                this.imgPath = 'http://localhost:8080/src/assets/images/noImage.png';
-                console.log("no initial image");
+            } else if (response.code === 2) {
+                // 如果用户还没有存过头像
+                this.imgPath =
+                    'http://localhost:8080/src/assets/images/noImage.png';
+                console.log('no initial image');
                 return;
             }
             // 显示数据库中的头像
@@ -159,7 +163,7 @@ export default defineComponent({
     },
     methods: {
         async changeName() {
-            if(this.newName === ''){
+            if (this.newName === '') {
                 alert('用户名不能为空');
                 return;
             }
@@ -180,34 +184,37 @@ export default defineComponent({
             this.clickedButton = false;
         },
         // 上传前，限制的上传图片大小
-        beforeImageUpload(rawFile: any){
+        beforeImageUpload(rawFile: any) {
             if (rawFile.size / 1024 > 5) {
                 alert('单张图片大小不能超过5KB!');
                 return false;
             }
             return true;
         },
-        getBase64(file) {
-            return new Promise(function(resolve, reject) {
+        getBase64(file: Blob) {
+            return new Promise(function (resolve, reject) {
                 let reader = new FileReader();
-                let imgResult = "";
+                let imgResult = '';
                 reader.readAsDataURL(file);
-                reader.onload = function() {
-                imgResult = reader.result;
+                reader.onload = function () {
+                    if (!(typeof reader.result == 'string')) {
+                        throw new Error('Unknown error');
+                    }
+                    imgResult = reader.result;
                 };
-                reader.onerror = function(error) {
-                reject(error);
+                reader.onerror = function (error) {
+                    reject(error);
                 };
-                reader.onloadend = function() {
-                resolve(imgResult);
+                reader.onloadend = function () {
+                    resolve(imgResult);
                 };
             });
         },
         // 上传成功，获取返回的图片地址
-        async handleUpImage(upload_file: any){
+        async handleUpImage(upload_file: any) {
             console.log('enter handle upload with file: ', upload_file.file);
-            let test = await this.getBase64(upload_file.file).then(res=>{
-                console.log(res, ' type: ', typeof(res));
+            let test = await this.getBase64(upload_file.file).then((res) => {
+                console.log(res, ' type: ', typeof res);
                 return res as string;
             });
             console.log('test: ', test);
@@ -227,7 +234,7 @@ export default defineComponent({
                 alert('异常');
             }
         },
-        handleChange(){
+        handleChange() {
             console.log('enter handle change ');
         },
         async getId() {
@@ -246,9 +253,9 @@ export default defineComponent({
     min-height: 280px;
 }
 .avatar-uploader .avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
+    width: 178px;
+    height: 178px;
+    display: block;
 }
 .user {
     padding-bottom: 20px;
@@ -271,7 +278,7 @@ export default defineComponent({
     }
 }
 .changeName {
-    .submitButton{
+    .submitButton {
         margin-top: -40px;
         margin-left: 20px;
     }
@@ -317,23 +324,23 @@ export default defineComponent({
 
 <style>
 .avatar-uploader .el-upload {
-  border: 1px dashed var(--el-border-color);
-  border-radius: 50%;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: var(--el-transition-duration-fast);
+    border: 1px dashed var(--el-border-color);
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: var(--el-transition-duration-fast);
 }
 
 .avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
+    border-color: var(--el-color-primary);
 }
 
 .el-icon.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  text-align: center;
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    text-align: center;
 }
 </style>
