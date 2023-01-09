@@ -138,5 +138,6 @@ export default class FakeFrontend {
                 });
             }
         });
+        this.socket.connect();
     }
 }
