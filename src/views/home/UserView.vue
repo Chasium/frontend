@@ -185,8 +185,8 @@ export default defineComponent({
         },
         // 上传前，限制的上传图片大小
         beforeImageUpload(rawFile: any) {
-            if (rawFile.size / 1024 > 5) {
-                alert('单张图片大小不能超过5KB!');
+            if (rawFile.size / 1024 > 63) {
+                alert('单张图片大小不能超过63KB!');
                 return false;
             }
             return true;
